@@ -59,8 +59,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.id;
         token.email = user.email;
         // Store the Firebase ID token from user object
-        if ((user as any).firebaseIdToken) {
-          token.firebaseIdToken = (user as any).firebaseIdToken;
+        if ("firebaseIdToken" in user && typeof user.firebaseIdToken === "string") {
+          token.firebaseIdToken = user.firebaseIdToken;
         }
       }
       return token;

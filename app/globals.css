@@ -33,7 +33,7 @@
   --accent-foreground: #0f172a;
   --muted: #1e293b;
   --muted-foreground: #94a3b8;
-  --border: #334155;
+  --border: #475569;
   --input: #334155;
   --ring: #60a5fa;
   --card: #1e293b;
@@ -68,4 +68,12 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }

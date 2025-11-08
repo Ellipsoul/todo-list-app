@@ -14,6 +14,7 @@ declare module "next-auth" {
     id: string;
     email: string | null;
     name: string | null;
+    firebaseIdToken?: string;
   }
 }
 

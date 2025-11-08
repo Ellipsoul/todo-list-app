@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/auth";
 import admin from "firebase-admin";
@@ -43,7 +43,7 @@ function initializeAdmin() {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     // Initialize Firebase Admin SDK
     if (!initializeAdmin()) {
@@ -75,11 +75,11 @@ export async function POST(request: NextRequest) {
     const customToken = await admin.auth().createCustomToken(decodedToken.uid);
 
     return NextResponse.json({ customToken });
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error creating custom token:", error);
-    return NextResponse.json(
-      { error: error.message || "Failed to create custom token" },
-      { status: 500 },
-    );
+    const errorMessage = error instanceof Error
+      ? error.message
+      : "Failed to create custom token";
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }

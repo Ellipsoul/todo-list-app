@@ -27,8 +27,9 @@ export async function createTodo(
       createdAt: Timestamp.now(),
     });
     return { id: docRef.id, error: null };
-  } catch (error: any) {
-    return { id: null, error: error.message };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { id: null, error: errorMessage };
   }
 }
 
@@ -42,7 +43,7 @@ export async function getTodos(userId: string): Promise<Todo[]> {
       ...doc.data(),
       createdAt: doc.data().createdAt,
     })) as Todo[];
-  } catch (error: any) {
+  } catch (error) {
     console.error("Error getting todos:", error);
     return [];
   }
@@ -81,8 +82,9 @@ export async function updateTodo(
     const todoRef = doc(db, `users/${userId}/todos`, todoId);
     await updateDoc(todoRef, updates);
     return { success: true, error: null };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
   }
 }
 
@@ -94,8 +96,9 @@ export async function deleteTodo(
     const todoRef = doc(db, `users/${userId}/todos`, todoId);
     await deleteDoc(todoRef);
     return { success: true, error: null };
-  } catch (error: any) {
-    return { success: false, error: error.message };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
   }
 }
 

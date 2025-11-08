@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import toast from "react-hot-toast";
 import { Todo } from "@/types/todo";
 import { subscribeToTodos, createTodo } from "@/lib/firestore";
 import { TodoItem } from "./TodoItem";
@@ -33,10 +34,13 @@ export function TodoList() {
     if (!session?.user?.id) return;
 
     setError("");
+    const loadingToast = toast.loading("Creating todo...");
     const result = await createTodo(session.user.id, data.title, data.description);
     if (result.error) {
+      toast.error(result.error || "Failed to create todo", { id: loadingToast });
       setError(result.error);
     } else {
+      toast.success("Todo created successfully!", { id: loadingToast });
       // Error will be cleared by the real-time listener when the todo is added
       setError("");
     }

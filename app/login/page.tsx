@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import Image from "next/image";
 import {
   getIdToken,
   signIn as firebaseSignIn,
@@ -23,6 +25,10 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    const loadingToast = toast.loading(
+      isSignUp ? "Creating your account..." : "Signing you in..."
+    );
+
     try {
       let firebaseUser = null;
 
@@ -30,6 +36,7 @@ export default function LoginPage() {
         // Sign up with Firebase Auth
         const result = await signUp(email, password);
         if (result.error) {
+          toast.error(result.error, { id: loadingToast });
           setError(result.error);
           setLoading(false);
           return;
@@ -39,6 +46,7 @@ export default function LoginPage() {
         // Sign in with Firebase Auth
         const result = await firebaseSignIn(email, password);
         if (result.error) {
+          toast.error(result.error, { id: loadingToast });
           setError(result.error);
           setLoading(false);
           return;
@@ -49,6 +57,7 @@ export default function LoginPage() {
       // Get Firebase ID token and sign in with NextAuth
       const idToken = await getIdToken(firebaseUser);
       if (!idToken) {
+        toast.error("Failed to get authentication token", { id: loadingToast });
         setError("Failed to get authentication token");
         setLoading(false);
         return;
@@ -60,12 +69,20 @@ export default function LoginPage() {
       });
 
       if (result?.error) {
+        toast.error("Authentication failed", { id: loadingToast });
         setError("Authentication failed");
       } else if (result?.ok) {
+        toast.success(
+          isSignUp
+            ? "Account created successfully! Welcome!"
+            : "Signed in successfully!",
+          { id: loadingToast }
+        );
         router.push("/");
         router.refresh();
       }
     } catch {
+      toast.error("An error occurred. Please try again.", { id: loadingToast });
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -76,10 +93,13 @@ export default function LoginPage() {
     setError("");
     setLoading(true);
 
+    const loadingToast = toast.loading("Signing in with Google...");
+
     try {
       // Sign in with Firebase Auth using Google
       const result = await signInWithGoogle();
       if (result.error) {
+        toast.error(result.error, { id: loadingToast });
         setError(result.error);
         setLoading(false);
         return;
@@ -88,6 +108,7 @@ export default function LoginPage() {
       // Get Firebase ID token and sign in with NextAuth
       const idToken = await getIdToken(result.user);
       if (!idToken) {
+        toast.error("Failed to get authentication token", { id: loadingToast });
         setError("Failed to get authentication token");
         setLoading(false);
         return;
@@ -99,12 +120,17 @@ export default function LoginPage() {
       });
 
       if (nextAuthResult?.error) {
+        toast.error("Authentication failed", { id: loadingToast });
         setError("Authentication failed");
       } else if (nextAuthResult?.ok) {
+        toast.success("Signed in with Google successfully!", {
+          id: loadingToast,
+        });
         router.push("/");
         router.refresh();
       }
     } catch {
+      toast.error("An error occurred. Please try again.", { id: loadingToast });
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -115,9 +141,18 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="w-full max-w-md">
         <div className="bg-card border border-border rounded-lg shadow-lg p-8">
-          <h1 className="text-3xl font-bold text-card-foreground mb-2 text-center">
-            {isSignUp ? "Sign Up" : "Sign In"}
-          </h1>
+          <div className="flex flex-col items-center mb-6">
+            <Image
+              src="/todo-logo.png"
+              alt="Todo Logo"
+              width={64}
+              height={64}
+              className="rounded-full mb-4"
+            />
+            <h1 className="text-3xl font-bold text-card-foreground mb-2 text-center">
+              {isSignUp ? "Sign Up" : "Sign In"}
+            </h1>
+          </div>
           <p className="text-muted-foreground text-center mb-6">
             {isSignUp
               ? "Create an account to get started"

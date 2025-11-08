@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signOut } from "next-auth/react";
+import toast from "react-hot-toast";
+import Image from "next/image";
 import { TodoList } from "@/components/TodoList";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { FirebaseAuthRestore } from "@/components/FirebaseAuthRestore";
@@ -31,9 +33,17 @@ export default function Home() {
   }
 
   const handleSignOut = async () => {
-    await signOut({ redirect: false });
-    router.push("/login");
-    router.refresh();
+    const loadingToast = toast.loading("Signing you out...");
+    try {
+      await signOut({ redirect: false });
+      toast.success("Signed out successfully!", { id: loadingToast });
+      router.push("/login");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to sign out. Please try again.", {
+        id: loadingToast,
+      });
+    }
   };
 
   return (
@@ -41,7 +51,16 @@ export default function Home() {
       <FirebaseAuthRestore />
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-card-foreground">Todo List</h1>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/todo-logo.png"
+              alt="Todo Logo"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <h1 className="text-2xl font-bold text-card-foreground">Todo List</h1>
+          </div>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
               {session?.user?.email}

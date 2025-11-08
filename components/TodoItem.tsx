@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import toast from "react-hot-toast";
 import { Todo } from "@/types/todo";
 import { updateTodo, deleteTodo } from "@/lib/firestore";
 import { TodoForm } from "./TodoForm";
@@ -18,26 +19,43 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
 
   const handleToggleComplete = async () => {
     setError("");
+    const loadingToast = toast.loading(
+      todo.completed ? "Marking as incomplete..." : "Marking as complete..."
+    );
     const result = await updateTodo(userId, todo.id, {
       completed: !todo.completed,
     });
     if (result.success) {
+      toast.success(
+        todo.completed
+          ? "Todo marked as incomplete"
+          : "Todo marked as complete!",
+        { id: loadingToast }
+      );
       onUpdate();
     } else {
+      toast.error(result.error || "Failed to update todo", {
+        id: loadingToast,
+      });
       setError(result.error || "Failed to update todo");
     }
   };
 
   const handleEdit = async (data: { title: string; description: string }) => {
     setError("");
+    const loadingToast = toast.loading("Updating todo...");
     const result = await updateTodo(userId, todo.id, {
       title: data.title,
       description: data.description,
     });
     if (result.success) {
+      toast.success("Todo updated successfully!", { id: loadingToast });
       setIsEditing(false);
       onUpdate();
     } else {
+      toast.error(result.error || "Failed to update todo", {
+        id: loadingToast,
+      });
       setError(result.error || "Failed to update todo");
     }
   };
@@ -48,11 +66,16 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
     }
     setError("");
     setIsDeleting(true);
+    const loadingToast = toast.loading("Deleting todo...");
     const result = await deleteTodo(userId, todo.id);
     if (result.success) {
+      toast.success("Todo deleted successfully!", { id: loadingToast });
       onUpdate();
     } else {
       setIsDeleting(false);
+      toast.error(result.error || "Failed to delete todo", {
+        id: loadingToast,
+      });
       setError(result.error || "Failed to delete todo");
     }
   };
