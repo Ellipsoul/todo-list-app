@@ -68,7 +68,7 @@ export function TodoForm({
       <div className="flex gap-2">
         <button
           type="submit"
-          className="flex-1 bg-primary text-primary-foreground py-2 px-4 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+          className="flex-1 bg-primary text-primary-foreground border border-primary/50 py-2 px-4 rounded-lg font-medium hover:bg-primary-hover transition-colors"
         >
           {submitLabel}
         </button>
@@ -76,7 +76,7 @@ export function TodoForm({
           <button
             type="button"
             onClick={onCancel}
-            className="px-4 py-2 border border-border rounded-lg text-card-foreground hover:bg-secondary transition-colors"
+            className="px-4 py-2 border border-border rounded-lg text-card-foreground hover:bg-secondary-hover transition-colors"
           >
             Cancel
           </button>

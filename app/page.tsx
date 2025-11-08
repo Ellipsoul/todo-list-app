@@ -68,7 +68,7 @@ export default function Home() {
             <ThemeToggle />
             <button
               onClick={handleSignOut}
-              className="px-4 py-2 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/80 transition-colors"
+              className="px-4 py-2 bg-secondary text-secondary-foreground border border-border rounded-lg hover:bg-secondary-hover transition-colors"
             >
               Sign Out
             </button>

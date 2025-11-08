@@ -2,7 +2,7 @@
 
 :root {
   /* Light theme colors */
-  --background: #ffffff;
+  --background: #fafafa;
   --foreground: #1a1a1a;
   --primary: #3b82f6;
   --primary-foreground: #ffffff;
@@ -10,7 +10,7 @@
   --secondary-foreground: #0f172a;
   --accent: #8b5cf6;
   --accent-foreground: #ffffff;
-  --muted: #f8fafc;
+  --muted: #f4f5f7;
   --muted-foreground: #64748b;
   --border: #e2e8f0;
   --input: #e2e8f0;
@@ -19,6 +19,10 @@
   --card-foreground: #1a1a1a;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
+  --primary-hover: #2563eb;
+  --secondary-hover: #e2e8f0;
+  --destructive-hover: #dc2626;
+  --accent-hover: #7c3aed;
 }
 
 .dark {
@@ -40,6 +44,10 @@
   --card-foreground: #f1f5f9;
   --destructive: #f87171;
   --destructive-foreground: #0f172a;
+  --primary-hover: #93c5fd;
+  --secondary-hover: #334155;
+  --destructive-hover: #fb9a9a;
+  --accent-hover: #c4b5fd;
 }
 
 @theme inline {
@@ -60,6 +68,10 @@
   --color-card-foreground: var(--card-foreground);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary-hover: var(--secondary-hover);
+  --color-destructive-hover: var(--destructive-hover);
+  --color-accent-hover: var(--accent-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

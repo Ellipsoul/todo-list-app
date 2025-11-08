@@ -144,14 +144,14 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
           <button
             onClick={() => setIsEditing(true)}
             disabled={isDeleting}
-            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 transition-colors disabled:opacity-50"
+            className="px-3 py-1 text-sm bg-secondary text-secondary-foreground border border-border rounded hover:bg-secondary-hover transition-colors disabled:opacity-50"
           >
             Edit
           </button>
           <button
             onClick={handleDelete}
             disabled={isDeleting}
-            className="px-3 py-1 text-sm bg-destructive text-destructive-foreground rounded hover:bg-destructive/90 transition-colors disabled:opacity-50"
+            className="px-3 py-1 text-sm bg-destructive text-destructive-foreground border border-destructive/50 rounded hover:bg-destructive-hover transition-colors disabled:opacity-50"
           >
             {isDeleting ? "Deleting..." : "Delete"}
           </button>
