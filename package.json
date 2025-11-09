@@ -16,7 +16,9 @@
     "dev:emulator": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true npm run dev",
     "dev:emulator:ci": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true next dev",
     "cy:run:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
-    "test:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\""
+    "test:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
+    "cleanup:users": "tsx scripts/cleanup-test-users.ts",
+    "cleanup:users:emulator": "USE_FIREBASE_EMULATOR=true tsx scripts/cleanup-test-users.ts"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
@@ -37,11 +39,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "cypress": "^15.6.0",
+    "dotenv": "^17.2.3",
     "eslint": "^9",
     "eslint-config-next": "16.0.1",
     "firebase-tools": "^13.0.0",
     "start-server-and-test": "^2.1.2",
     "tailwindcss": "^4",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }
