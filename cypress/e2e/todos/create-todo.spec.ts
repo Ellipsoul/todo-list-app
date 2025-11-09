@@ -14,8 +14,8 @@ describe("Create Todo", () => {
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
-    cy.url({ timeout: 20000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 15000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
   });
 
   it("should show form validation for empty title", () => {
@@ -34,7 +34,7 @@ describe("Create Todo", () => {
     cy.get('button[type="submit"]').contains("Add Todo").click();
     
     // Wait for todo to appear in list (more reliable than waiting for toast)
-    cy.contains(todoTitle, { timeout: 15000 }).should("be.visible");
+    cy.contains(todoTitle, { timeout: 1000 }).should("be.visible");
     
     // Verify form is cleared
     cy.get('input[id="title"]').should("have.value", "");
@@ -50,8 +50,8 @@ describe("Create Todo", () => {
     cy.get('button[type="submit"]').contains("Add Todo").click();
     
     // Wait for todo to appear in list (more reliable than waiting for toast)
-    cy.contains(todoTitle, { timeout: 15000 }).should("be.visible");
-    cy.contains(todoDescription, { timeout: 10000 }).should("be.visible");
+    cy.contains(todoTitle, { timeout: 1000 }).should("be.visible");
+    cy.contains(todoDescription, { timeout: 1000 }).should("be.visible");
     
     // Verify form is cleared
     cy.get('input[id="title"]').should("have.value", "");
@@ -70,8 +70,8 @@ describe("Create Todo", () => {
     cy.get('button[type="submit"]').contains("Add Todo").click();
     
     // Wait for trimmed values to appear in list (more reliable than waiting for toast)
-    cy.contains(trimmedTitle, { timeout: 15000 }).should("be.visible");
-    cy.contains(trimmedDescription, { timeout: 10000 }).should("be.visible");
+    cy.contains(trimmedTitle, { timeout: 1000 }).should("be.visible");
+    cy.contains(trimmedDescription, { timeout: 1000 }).should("be.visible");
   });
 
   it("should display multiple todos in the list", () => {

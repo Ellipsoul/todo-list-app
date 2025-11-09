@@ -64,15 +64,15 @@ describe("Sign Up Flow", () => {
     cy.get('button[type="submit"]').contains("Sign Up").click();
     
     // Wait for redirect to home page (more reliable than waiting for toast)
-    cy.url({ timeout: 15000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
     
     // Verify we're on the home page
-    cy.contains("Todo List", { timeout: 10000 }).should("be.visible");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
     
     // Verify toast message appears (optional check)
     cy.get('body').then(($body) => {
       if ($body.find('[role="status"]').length > 0) {
-        cy.contains("Account created successfully", { timeout: 5000 }).should("exist");
+        cy.contains("Account created successfully", { timeout: 1000 }).should("exist");
       }
     });
   });
@@ -87,13 +87,13 @@ describe("Sign Up Flow", () => {
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
-    cy.url({ timeout: 15000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
     
     // Logout
     cy.get('header').within(() => {
       cy.get('button').contains("Sign Out").click();
     });
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     
     // Try to sign up with the same email
     cy.get('button').contains("Don't have an account? Sign up").click();
@@ -102,7 +102,7 @@ describe("Sign Up Flow", () => {
     cy.get('button[type="submit"]').contains("Sign Up").click();
     
     // Should show error message (check both toast and form error)
-    cy.get('body', { timeout: 10000 }).should(($body) => {
+    cy.get('body', { timeout: 1000 }).should(($body) => {
       const hasError = $body.text().match(/email|already|exists|in use|auth\/email-already-in-use/i);
       expect(hasError).to.not.be.null;
     });

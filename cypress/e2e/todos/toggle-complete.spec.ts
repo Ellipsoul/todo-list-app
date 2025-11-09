@@ -14,14 +14,14 @@ describe("Toggle Todo Complete", () => {
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
-    cy.url({ timeout: 20000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 15000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
     
     // Create a test todo
     const todoTitle = `Test Todo ${Date.now()}`;
     cy.get('input[id="title"]').type(todoTitle);
     cy.get('button[type="submit"]').contains("Add Todo").click();
-    cy.contains(todoTitle, { timeout: 15000 }).should("be.visible");
+    cy.contains(todoTitle, { timeout: 1000 }).should("be.visible");
   });
 
   it("should mark todo as complete when checkbox is checked", () => {
@@ -29,7 +29,7 @@ describe("Toggle Todo Complete", () => {
     cy.get('input[type="checkbox"]').first().check();
     
     // Wait for checkbox to be checked (more reliable than waiting for toast)
-    cy.get('input[type="checkbox"]').first().should("be.checked", { timeout: 10000 });
+    cy.get('input[type="checkbox"]').first().should("be.checked", { timeout: 1000 });
     
     // Verify visual changes (line-through and opacity)
     cy.get('input[type="checkbox"]').first().parent().parent().within(() => {
@@ -50,7 +50,7 @@ describe("Toggle Todo Complete", () => {
     cy.get('input[type="checkbox"]').first().uncheck();
     
     // Wait for checkbox to be unchecked (more reliable than waiting for toast)
-    cy.get('input[type="checkbox"]').first().should("not.be.checked", { timeout: 10000 });
+    cy.get('input[type="checkbox"]').first().should("not.be.checked", { timeout: 1000 });
     
     // Verify visual changes are reverted (no line-through)
     cy.get('input[type="checkbox"]').first().parent().parent().within(() => {
@@ -100,11 +100,11 @@ describe("Toggle Todo Complete", () => {
     const todo2 = `Todo 2 ${Date.now()}`;
     cy.get('input[id="title"]').type(todo2);
     cy.get('button[type="submit"]').contains("Add Todo").click();
-    cy.contains(todo2, { timeout: 15000 }).should("be.visible");
+    cy.contains(todo2, { timeout: 1000 }).should("be.visible");
     
     // Toggle first todo to complete
     cy.get('input[type="checkbox"]').first().check();
-    cy.get('input[type="checkbox"]').first().should("be.checked", { timeout: 10000 });
+    cy.get('input[type="checkbox"]').first().should("be.checked", { timeout: 1000 });
     
     // Wait for state update
     cy.wait(1000);
@@ -115,7 +115,7 @@ describe("Toggle Todo Complete", () => {
     
     // Toggle second todo to complete
     cy.get('input[type="checkbox"]').last().check();
-    cy.get('input[type="checkbox"]').last().should("be.checked", { timeout: 10000 });
+    cy.get('input[type="checkbox"]').last().should("be.checked", { timeout: 1000 });
     
     // Wait for state update
     cy.wait(1000);

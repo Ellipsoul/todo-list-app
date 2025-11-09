@@ -24,14 +24,23 @@ if (
   try {
     // Check if already connected to prevent multiple connections
     connectFirestoreEmulator(db, "localhost", 8080);
+    // Log to verify emulator connection (only in development)
+    if (process.env.NODE_ENV !== "production") {
+      console.log("✅ Firestore connected to EMULATOR at localhost:8080");
+    }
   } catch (error) {
     // Ignore error if already connected
     if (
       error instanceof Error &&
       !error.message.includes("already been called")
     ) {
-      console.error("Error connecting to Firestore emulator:", error);
+      console.error("❌ Error connecting to Firestore emulator:", error);
     }
+  }
+} else if (typeof window !== "undefined") {
+  // Log warning if emulator should be enabled but isn't
+  if (process.env.NODE_ENV !== "production") {
+    console.warn("⚠️  Firestore NOT using emulator. NEXT_PUBLIC_USE_FIREBASE_EMULATOR:", process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR);
   }
 }
 

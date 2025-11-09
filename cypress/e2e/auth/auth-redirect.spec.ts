@@ -25,8 +25,8 @@ describe("Authentication Redirects", () => {
     cy.get('button[type="submit"]').contains("Sign Up").click();
     
     // Should be on home page
-    cy.url({ timeout: 15000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 10000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
     
     // Try to access home page again (should stay on home)
     cy.visit("/");
@@ -46,14 +46,14 @@ describe("Authentication Redirects", () => {
     cy.get('button[type="submit"]').contains("Sign Up").click();
     
     // Should be on home page
-    cy.url({ timeout: 15000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
     
     // Try to visit login page while authenticated
     cy.visit("/login");
     
     // Authenticated users can visit the login page (no automatic redirect)
     // The login page is accessible but they can still use it
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     cy.contains("Sign In").should("be.visible");
   });
 
@@ -69,15 +69,15 @@ describe("Authentication Redirects", () => {
     cy.get('button[type="submit"]').contains("Sign Up").click();
     
     // Should be on home page
-    cy.url({ timeout: 15000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 10000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
     
     // Refresh the page
     cy.reload();
     
     // Should still be authenticated and on home page
-    cy.url({ timeout: 10000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 10000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
   });
 });
 

@@ -14,8 +14,8 @@ describe("Sign Out Flow", () => {
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
-    cy.url({ timeout: 20000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 15000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
   });
 
   it("should display sign out button in header", () => {
@@ -35,8 +35,8 @@ describe("Sign Out Flow", () => {
     });
     
     // Wait for redirect to login page (more reliable than waiting for toast)
-    cy.url({ timeout: 10000 }).should("include", "/login");
-    cy.contains("Sign In", { timeout: 10000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("include", "/login");
+    cy.contains("Sign In", { timeout: 1000 }).should("be.visible");
   });
 
   it("should redirect to login page after sign out", () => {
@@ -46,7 +46,7 @@ describe("Sign Out Flow", () => {
     });
     
     // Wait for redirect
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     
     // Verify we're on the login page
     cy.contains("Sign In").should("be.visible");
@@ -59,7 +59,7 @@ describe("Sign Out Flow", () => {
     cy.get('header').within(() => {
       cy.get('button').contains("Sign Out").click();
     });
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     
     // Try to access home page
     cy.visit("/");
@@ -82,13 +82,13 @@ describe("Sign Out Flow", () => {
     const todoTitle = `Test Todo ${Date.now()}`;
     cy.get('input[id="title"]').type(todoTitle);
     cy.get('button[type="submit"]').contains("Add Todo").click();
-    cy.contains(todoTitle, { timeout: 15000 }).should("be.visible");
+    cy.contains(todoTitle, { timeout: 1000 }).should("be.visible");
     
     // Sign out
     cy.get('header').within(() => {
       cy.get('button').contains("Sign Out").click();
     });
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     
     // Sign back in (we'll need to create a new account or use the same credentials)
     // For this test, we'll just verify sign out worked
@@ -104,7 +104,7 @@ describe("Sign Out Flow", () => {
       cy.get('button').contains("Sign Out").click();
     });
     
-    cy.url({ timeout: 10000 }).should("include", "/login");
+    cy.url({ timeout: 1000 }).should("include", "/login");
     
     // Email should not be visible on login page (header is not on login page)
     cy.get('header').should("not.exist");

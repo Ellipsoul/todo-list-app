@@ -16,14 +16,14 @@ describe("Edit Todo", () => {
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
-    cy.url({ timeout: 20000 }).should("eq", Cypress.config().baseUrl + "/");
-    cy.contains("Todo List", { timeout: 15000 }).should("be.visible");
+    cy.url({ timeout: 1000 }).should("eq", Cypress.config().baseUrl + "/");
+    cy.contains("Todo List", { timeout: 1000 }).should("be.visible");
 
     // Create a test todo
     const todoTitle = `Test Todo ${Date.now()}`;
     cy.get('input[id="title"]').type(todoTitle);
     cy.get('button[type="submit"]').contains("Add Todo").click();
-    cy.contains(todoTitle, { timeout: 15000 }).should("be.visible");
+    cy.contains(todoTitle, { timeout: 1000 }).should("be.visible");
   });
 
   it("should enter edit mode when edit button is clicked", () => {
@@ -59,8 +59,8 @@ describe("Edit Todo", () => {
     });
 
     // Wait for updated values to appear in list (more reliable than waiting for toast)
-    cy.contains(newTitle, { timeout: 15000 }).should("be.visible");
-    cy.contains(newDescription, { timeout: 10000 }).should("be.visible");
+    cy.contains(newTitle, { timeout: 1000 }).should("be.visible");
+    cy.contains(newDescription, { timeout: 1000 }).should("be.visible");
 
     // Verify edit form is gone
     cy.get("button").contains("Save").should("not.exist");
@@ -125,7 +125,7 @@ describe("Edit Todo", () => {
     });
 
     // Wait for trimmed title to appear in list (more reliable than waiting for toast)
-    cy.contains(trimmedTitle, { timeout: 15000 }).should("be.visible");
+    cy.contains(trimmedTitle, { timeout: 1000 }).should("be.visible");
   });
 
   it("should allow editing multiple todos independently", () => {
@@ -133,7 +133,7 @@ describe("Edit Todo", () => {
     const todo2 = `Todo 2 ${Date.now()}`;
     cy.get('input[id="title"]').type(todo2);
     cy.get('button[type="submit"]').contains("Add Todo").click();
-    cy.contains(todo2, { timeout: 5000 }).should("be.visible");
+    cy.contains(todo2, { timeout: 1000 }).should("be.visible");
 
     // Get all todo items (they are in div.bg-card containers)
     // The newest todo (todo2) appears first, the oldest (from beforeEach) appears last
@@ -142,7 +142,7 @@ describe("Edit Todo", () => {
       cy.get("div.bg-card").last().within(() => {
         cy.get("button").contains("Edit").click();
         // Wait for edit form to appear
-        cy.get("button").contains("Save", { timeout: 5000 }).should(
+        cy.get("button").contains("Save", { timeout: 1000 }).should(
           "be.visible",
         );
         // Now edit the form
@@ -151,14 +151,14 @@ describe("Edit Todo", () => {
       });
     });
 
-    cy.contains("First Todo Updated", { timeout: 15000 }).should("be.visible");
+    cy.contains("First Todo Updated", { timeout: 1000 }).should("be.visible");
 
     // Edit second todo (todo2, appears first due to desc order)
     cy.get("div.space-y-3").within(() => {
       cy.get("div.bg-card").first().within(() => {
         cy.get("button").contains("Edit").click();
         // Wait for edit form to appear
-        cy.get("button").contains("Save", { timeout: 5000 }).should(
+        cy.get("button").contains("Save", { timeout: 1000 }).should(
           "be.visible",
         );
         // Now edit the form
@@ -167,7 +167,7 @@ describe("Edit Todo", () => {
       });
     });
 
-    cy.contains("Second Todo Updated", { timeout: 15000 }).should("be.visible");
+    cy.contains("Second Todo Updated", { timeout: 1000 }).should("be.visible");
 
     // Verify both todos are updated
     cy.contains("First Todo Updated").should("be.visible");

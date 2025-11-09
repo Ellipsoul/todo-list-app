@@ -1,5 +1,6 @@
 import { getApps, initializeApp } from "firebase/app";
 import {
+  connectAuthEmulator,
   createUserWithEmailAndPassword,
   getAuth,
   GoogleAuthProvider,
@@ -7,7 +8,6 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   User,
-  connectAuthEmulator,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -26,21 +26,45 @@ const app = getApps().length === 0
 export const auth = getAuth(app);
 
 // Connect to Auth emulator if enabled (client-side only)
-if (
-  typeof window !== "undefined" &&
-  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true"
-) {
+// IMPORTANT: This must be called BEFORE any auth operations
+// Check both the environment variable and ensure we're in browser context
+const shouldUseEmulator = typeof window !== "undefined" &&
+  (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true" ||
+    process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === true);
+
+if (shouldUseEmulator) {
   try {
     // Check if already connected to prevent multiple connections
-    connectAuthEmulator(auth, "http://localhost:9099");
+    // This will route ALL auth operations to the emulator at localhost:9099
+    connectAuthEmulator(auth, "http://localhost:9099", {
+      disableWarnings: true,
+    });
+    // Log to verify emulator connection (only in development)
+    if (process.env.NODE_ENV !== "production") {
+      console.log(
+        "✅ Firebase Auth connected to EMULATOR at http://localhost:9099",
+      );
+      console.log(
+        "   This means ALL authentication will use the emulator, NOT production",
+      );
+    }
   } catch (error) {
     // Ignore error if already connected
     if (
       error instanceof Error &&
       !error.message.includes("already been called")
     ) {
-      console.error("Error connecting to Auth emulator:", error);
+      console.error("❌ Error connecting to Auth emulator:", error);
     }
+  }
+} else if (typeof window !== "undefined") {
+  // Log warning if emulator should be enabled but isn't
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(
+      "⚠️  Firebase Auth NOT using emulator. NEXT_PUBLIC_USE_FIREBASE_EMULATOR:",
+      process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR,
+    );
+    console.warn("   Authentication will use PRODUCTION Firebase");
   }
 }
 
