@@ -90,8 +90,9 @@ describe("Delete Todo", () => {
       // Delete first todo
       cy.window().then((win) => {
         // Restore confirm if it exists and is a stub
-        if (win.confirm && typeof (win.confirm as any).restore === "function") {
-          (win.confirm as any).restore();
+        const confirmFn = win.confirm as (() => boolean) & { restore?: () => void };
+        if (confirmFn && typeof confirmFn.restore === "function") {
+          confirmFn.restore();
         }
         cy.stub(win, "confirm").returns(true);
       });
@@ -107,8 +108,9 @@ describe("Delete Todo", () => {
       // Delete second todo - restore the stub first
       cy.window().then((win) => {
         // Restore confirm if it exists and is a stub
-        if (win.confirm && typeof (win.confirm as any).restore === "function") {
-          (win.confirm as any).restore();
+        const confirmFn = win.confirm as (() => boolean) & { restore?: () => void };
+        if (confirmFn && typeof confirmFn.restore === "function") {
+          confirmFn.restore();
         }
         cy.stub(win, "confirm").returns(true);
       });

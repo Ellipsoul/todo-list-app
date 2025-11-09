@@ -70,14 +70,6 @@ describe("Sign Out Flow", () => {
   });
 
   it("should clear session after sign out", () => {
-    // Get email from session (we need to store it)
-    let userEmail: string;
-    cy.get('header').within(() => {
-      cy.get('div').contains('@').then(($email) => {
-        userEmail = $email.text();
-      });
-    });
-    
     // Create a todo to verify session was active
     const todoTitle = `Test Todo ${Date.now()}`;
     cy.get('input[id="title"]').type(todoTitle);

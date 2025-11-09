@@ -33,7 +33,9 @@ AUTH_SECRET=
 FIREBASE_SERVICE_ACCOUNT=
 ```
 
-**Note:** `FIREBASE_SERVICE_ACCOUNT` should be a JSON string containing your Firebase service account credentials. This is required for Firebase Auth state restoration. See the Firebase Admin SDK setup section below.
+**Note:** `FIREBASE_SERVICE_ACCOUNT` should be a JSON string containing your
+Firebase service account credentials. This is required for Firebase Auth state
+restoration. See the Firebase Admin SDK setup section below.
 
 ### Setting up Firebase Authentication
 
@@ -55,22 +57,27 @@ and
 
 ### Setting up Firebase Admin SDK
 
-To enable Firebase Auth state restoration (required for Firestore queries to work after authentication), you need to set up Firebase Admin SDK:
+To enable Firebase Auth state restoration (required for Firestore queries to
+work after authentication), you need to set up Firebase Admin SDK:
 
 1. Go to the [Firebase Console](https://console.firebase.google.com/)
 2. Select your project
 3. Navigate to **Project Settings** → **Service Accounts**
 4. Click **Generate New Private Key**
 5. Download the JSON file
-6. Convert the JSON file content to a single-line string and set it as the `FIREBASE_SERVICE_ACCOUNT` environment variable
+6. Convert the JSON file content to a single-line string and set it as the
+   `FIREBASE_SERVICE_ACCOUNT` environment variable
 
-Alternatively, if you're deploying to Firebase Hosting or Google Cloud Run, the Admin SDK will use default credentials automatically.
+Alternatively, if you're deploying to Firebase Hosting or Google Cloud Run, the
+Admin SDK will use default credentials automatically.
 
-**Important:** The Firebase Admin SDK is required to restore Firebase Auth state after page reloads, which ensures Firestore queries work properly.
+**Important:** The Firebase Admin SDK is required to restore Firebase Auth state
+after page reloads, which ensures Firestore queries work properly.
 
 ### Setting up Firestore Security Rules
 
-Make sure your Firestore security rules allow authenticated users to access their own todos:
+Make sure your Firestore security rules allow authenticated users to access
+their own todos:
 
 ```javascript
 rules_version = '2';
@@ -94,11 +101,15 @@ application.
 
 ## Firebase Emulator Suite
 
-This project includes Firebase Emulator Suite configuration for local testing. This allows you to run tests without affecting your production Firebase environment.
+This project includes Firebase Emulator Suite configuration for local testing.
+This allows you to run tests without affecting your production Firebase
+environment.
 
 ### Setting up the Emulator Suite
 
-The emulator configuration is already set up in `firebase.json`. The emulators run on the following ports:
+The emulator configuration is already set up in `firebase.json`. The emulators
+run on the following ports:
+
 - **Auth Emulator**: `localhost:9099`
 - **Firestore Emulator**: `localhost:8080`
 - **Emulator UI**: `localhost:4000`
@@ -113,7 +124,8 @@ To start the Firebase emulators:
 npm run emulators:start
 ```
 
-This will start all configured emulators and open the Emulator UI at [http://localhost:4000](http://localhost:4000).
+This will start all configured emulators and open the Emulator UI at
+[http://localhost:4000](http://localhost:4000).
 
 #### Run Development Server with Emulators
 
@@ -123,7 +135,9 @@ To run the Next.js development server connected to the emulators:
 npm run dev:emulator
 ```
 
-This sets the required environment variables (`NEXT_PUBLIC_USE_FIREBASE_EMULATOR` and `USE_FIREBASE_EMULATOR`) and starts the dev server.
+This sets the required environment variables
+(`NEXT_PUBLIC_USE_FIREBASE_EMULATOR` and `USE_FIREBASE_EMULATOR`) and starts the
+dev server.
 
 #### Run Tests with Emulators
 
@@ -139,27 +153,36 @@ Or use the convenience script:
 npm run test:emulator
 ```
 
-The `firebase emulators:exec` command automatically starts the emulators before running tests and stops them after completion.
+The `firebase emulators:exec` command automatically starts the emulators before
+running tests and stops them after completion.
 
 ### Environment Variables for Emulator Mode
 
-When running with emulators, the following environment variables are automatically set:
+When running with emulators, the following environment variables are
+automatically set:
 
-- `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` - Enables client-side SDK emulator connections
-- `USE_FIREBASE_EMULATOR=true` - Enables server-side Admin SDK emulator connections
-- `FIREBASE_AUTH_EMULATOR_HOST=localhost:9099` - Admin SDK Auth emulator host (set programmatically)
-- `FIRESTORE_EMULATOR_HOST=localhost:8080` - Admin SDK Firestore emulator host (set programmatically)
+- `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` - Enables client-side SDK emulator
+  connections
+- `USE_FIREBASE_EMULATOR=true` - Enables server-side Admin SDK emulator
+  connections
+- `FIREBASE_AUTH_EMULATOR_HOST=localhost:9099` - Admin SDK Auth emulator host
+  (set programmatically)
+- `FIRESTORE_EMULATOR_HOST=localhost:8080` - Admin SDK Firestore emulator host
+  (set programmatically)
 
 ### Emulator vs Production Mode
 
 - **Production Mode** (default): Connects to your production Firebase project
 - **Emulator Mode**: Connects to local emulators running on your machine
 
-The app automatically detects emulator mode via environment variables and connects to the appropriate endpoints. Emulator data is ephemeral and resets when emulators are restarted.
+The app automatically detects emulator mode via environment variables and
+connects to the appropriate endpoints. Emulator data is ephemeral and resets
+when emulators are restarted.
 
 ### Benefits of Using Emulators
 
-- **No Production Pollution**: Tests don't create users or data in your production environment
+- **No Production Pollution**: Tests don't create users or data in your
+  production environment
 - **Fast Testing**: Local emulators are faster than production API calls
 - **Isolated Testing**: Each test run starts with a clean slate
 - **Cost Savings**: No Firebase usage costs during testing

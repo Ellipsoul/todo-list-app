@@ -38,7 +38,7 @@ describe("Sign In Flow", () => {
     // Should show error message (check both toast and form error)
     cy.get('body', { timeout: 1000 }).should(($body) => {
       const hasError = $body.text().match(/invalid|incorrect|wrong|failed|auth\/wrong-password|auth\/user-not-found/i);
-      expect(hasError).to.not.be.null;
+      void expect(hasError).not.to.be.null;
     });
   });
 

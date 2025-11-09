@@ -29,8 +29,7 @@ export const auth = getAuth(app);
 // IMPORTANT: This must be called BEFORE any auth operations
 // Check both the environment variable and ensure we're in browser context
 const shouldUseEmulator = typeof window !== "undefined" &&
-  (process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true" ||
-    process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === true);
+  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true";
 
 if (shouldUseEmulator) {
   try {

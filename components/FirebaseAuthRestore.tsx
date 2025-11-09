@@ -65,4 +65,3 @@ export function FirebaseAuthRestore() {
 
   return null; // This component doesn't render anything
 }
-

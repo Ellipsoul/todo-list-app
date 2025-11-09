@@ -3,7 +3,7 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Todo } from "@/types/todo";
-import { updateTodo, deleteTodo } from "@/lib/firestore";
+import { deleteTodo, updateTodo } from "@/lib/firestore";
 import { TodoForm } from "./TodoForm";
 
 interface TodoItemProps {
@@ -20,7 +20,7 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
   const handleToggleComplete = async () => {
     setError("");
     const loadingToast = toast.loading(
-      todo.completed ? "Marking as incomplete..." : "Marking as complete..."
+      todo.completed ? "Marking as incomplete..." : "Marking as complete...",
     );
     const result = await updateTodo(userId, todo.id, {
       completed: !todo.completed,
@@ -30,7 +30,7 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
         todo.completed
           ? "Todo marked as incomplete"
           : "Todo marked as complete!",
-        { id: loadingToast }
+        { id: loadingToast },
       );
       onUpdate();
     } else {
@@ -160,4 +160,3 @@ export function TodoItem({ todo, userId, onUpdate }: TodoItemProps) {
     </div>
   );
 }
-

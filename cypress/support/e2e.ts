@@ -20,7 +20,7 @@ import "./commands";
 // require('./commands')
 
 // Prevent Cypress from failing on uncaught exceptions
-Cypress.on("uncaught:exception", (err, runnable) => {
+Cypress.on("uncaught:exception", (err) => {
   // returning false here prevents Cypress from failing the test
   // You may want to handle specific errors differently
   if (err.message.includes("ResizeObserver loop limit exceeded")) {

@@ -15,23 +15,22 @@ const mockSession = {
   status: "authenticated" as const,
 };
 
-// Mock useSession hook
-cy.stub(require("next-auth/react"), "useSession", () => mockSession);
-
 // Mock firestore functions
 const mockCreateTodo = cy.stub().resolves({ id: "new-todo-id", error: null });
 const mockSubscribeToTodos = cy.stub().returns(() => {}); // Returns unsubscribe function
 
-// Mock firestore module
-cy.stub(require("@/lib/firestore"), "createTodo", mockCreateTodo);
-cy.stub(require("@/lib/firestore"), "subscribeToTodos", mockSubscribeToTodos);
+// Mock modules
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const nextAuthModule = require("next-auth/react");
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const firestoreModule = require("@/lib/firestore");
 
-// Mock toast
-const mockToast = {
-  loading: cy.stub().returns("toast-id"),
-  success: cy.stub(),
-  error: cy.stub(),
-};
+// Mock useSession hook
+cy.stub(nextAuthModule, "useSession").returns(mockSession);
+
+// Mock firestore module exports
+cy.stub(firestoreModule, "createTodo").callsFake(mockCreateTodo);
+cy.stub(firestoreModule, "subscribeToTodos").callsFake(mockSubscribeToTodos);
 
 describe("TodoList Component", () => {
   beforeEach(() => {
@@ -42,15 +41,19 @@ describe("TodoList Component", () => {
 
   it("should render empty state when no todos exist", () => {
     // Mock subscribeToTodos to call callback with empty array
-    mockSubscribeToTodos.callsFake((userId: string, callback: (todos: Todo[]) => void) => {
-      callback([]);
-      return () => {}; // Return unsubscribe function
-    });
-    
+    mockSubscribeToTodos.callsFake(
+      (userId: string, callback: (todos: Todo[]) => void) => {
+        callback([]);
+        return () => {}; // Return unsubscribe function
+      },
+    );
+
     mount(<TodoList />);
-    
+
     // Verify empty state message
-    cy.contains("No todos yet. Create your first todo above!").should("be.visible");
+    cy.contains("No todos yet. Create your first todo above!").should(
+      "be.visible",
+    );
   });
 
   it("should render loading state initially", () => {
@@ -58,9 +61,9 @@ describe("TodoList Component", () => {
     mockSubscribeToTodos.callsFake(() => {
       return () => {}; // Return unsubscribe function
     });
-    
+
     mount(<TodoList />);
-    
+
     // Verify loading state
     cy.contains("Loading...").should("be.visible");
   });
@@ -82,15 +85,17 @@ describe("TodoList Component", () => {
         createdAt: Timestamp.now(),
       },
     ];
-    
+
     // Mock subscribeToTodos to call callback with todos
-    mockSubscribeToTodos.callsFake((userId: string, callback: (todos: Todo[]) => void) => {
-      callback(mockTodos);
-      return () => {}; // Return unsubscribe function
-    });
-    
+    mockSubscribeToTodos.callsFake(
+      (userId: string, callback: (todos: Todo[]) => void) => {
+        callback(mockTodos);
+        return () => {}; // Return unsubscribe function
+      },
+    );
+
     mount(<TodoList />);
-    
+
     // Verify todos are displayed
     cy.contains("Todo 1").should("be.visible");
     cy.contains("Todo 2").should("be.visible");
@@ -115,28 +120,32 @@ describe("TodoList Component", () => {
         createdAt: Timestamp.now(),
       },
     ];
-    
+
     // Mock subscribeToTodos
-    mockSubscribeToTodos.callsFake((userId: string, callback: (todos: Todo[]) => void) => {
-      callback(mockTodos);
-      return () => {};
-    });
-    
+    mockSubscribeToTodos.callsFake(
+      (userId: string, callback: (todos: Todo[]) => void) => {
+        callback(mockTodos);
+        return () => {};
+      },
+    );
+
     mount(<TodoList />);
-    
+
     // Verify count is displayed
     cy.contains("Your Todos (2)").should("be.visible");
   });
 
   it("should render TodoForm component", () => {
     // Mock subscribeToTodos with empty array
-    mockSubscribeToTodos.callsFake((userId: string, callback: (todos: Todo[]) => void) => {
-      callback([]);
-      return () => {};
-    });
-    
+    mockSubscribeToTodos.callsFake(
+      (userId: string, callback: (todos: Todo[]) => void) => {
+        callback([]);
+        return () => {};
+      },
+    );
+
     mount(<TodoList />);
-    
+
     // Verify TodoForm is rendered
     cy.get('input[id="title"]').should("be.visible");
     cy.get('textarea[id="description"]').should("be.visible");
@@ -145,15 +154,15 @@ describe("TodoList Component", () => {
 
   it("should not render when session is not available", () => {
     // Mock useSession to return unauthenticated
-    cy.stub(require("next-auth/react"), "useSession", () => ({
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    cy.stub(require("next-auth/react"), "useSession").returns({
       data: null,
       status: "unauthenticated" as const,
-    }));
-    
+    });
+
     mount(<TodoList />);
-    
+
     // Component should return null
     cy.get("body").should("not.contain", "Todo List");
   });
 });
-

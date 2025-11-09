@@ -104,7 +104,7 @@ describe("Sign Up Flow", () => {
     // Should show error message (check both toast and form error)
     cy.get('body', { timeout: 1000 }).should(($body) => {
       const hasError = $body.text().match(/email|already|exists|in use|auth\/email-already-in-use/i);
-      expect(hasError).to.not.be.null;
+      void expect(hasError).not.to.be.null;
     });
   });
 });
