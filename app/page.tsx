@@ -40,9 +40,14 @@ export default function Home() {
       router.push("/login");
       router.refresh();
     } catch (error) {
-      toast.error("Failed to sign out. Please try again.", {
-        id: loadingToast,
-      });
+      toast.error(
+        `Failed to sign out. Please try again. ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+        {
+          id: loadingToast,
+        },
+      );
     }
   };
 
@@ -59,7 +64,9 @@ export default function Home() {
               height={40}
               className="rounded-full"
             />
-            <h1 className="text-2xl font-bold text-card-foreground">Todo List</h1>
+            <h1 className="text-2xl font-bold text-card-foreground">
+              Todo List
+            </h1>
           </div>
           <div className="flex items-center gap-4">
             <div className="text-sm text-muted-foreground">
