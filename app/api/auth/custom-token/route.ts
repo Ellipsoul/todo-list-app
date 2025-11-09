@@ -12,6 +12,12 @@ function initializeAdmin() {
   }
 
   try {
+    // Set emulator environment variables if emulator mode is enabled
+    if (process.env.USE_FIREBASE_EMULATOR === "true") {
+      process.env.FIREBASE_AUTH_EMULATOR_HOST = "localhost:9099";
+      process.env.FIRESTORE_EMULATOR_HOST = "localhost:8080";
+    }
+
     // Try to initialize with service account credentials
     // You can set this via environment variable (FIREBASE_SERVICE_ACCOUNT as JSON string)
     const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT

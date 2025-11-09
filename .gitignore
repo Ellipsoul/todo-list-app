@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+cypress.env.json
+cypress/videos
+cypress/screenshots
+cypress/downloads
 
 # next.js
 /.next/
@@ -39,3 +43,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# firebase emulator
+.firebase/
+firebase-debug.log

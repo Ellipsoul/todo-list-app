@@ -7,6 +7,7 @@ import {
   signInWithEmailAndPassword,
   signInWithPopup,
   User,
+  connectAuthEmulator,
 } from "firebase/auth";
 
 const firebaseConfig = {
@@ -23,6 +24,25 @@ const app = getApps().length === 0
   ? initializeApp(firebaseConfig)
   : getApps()[0];
 export const auth = getAuth(app);
+
+// Connect to Auth emulator if enabled (client-side only)
+if (
+  typeof window !== "undefined" &&
+  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true"
+) {
+  try {
+    // Check if already connected to prevent multiple connections
+    connectAuthEmulator(auth, "http://localhost:9099");
+  } catch (error) {
+    // Ignore error if already connected
+    if (
+      error instanceof Error &&
+      !error.message.includes("already been called")
+    ) {
+      console.error("Error connecting to Auth emulator:", error);
+    }
+  }
+}
 
 export async function signUp(email: string, password: string) {
   try {

@@ -92,6 +92,78 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 application.
 
+## Firebase Emulator Suite
+
+This project includes Firebase Emulator Suite configuration for local testing. This allows you to run tests without affecting your production Firebase environment.
+
+### Setting up the Emulator Suite
+
+The emulator configuration is already set up in `firebase.json`. The emulators run on the following ports:
+- **Auth Emulator**: `localhost:9099`
+- **Firestore Emulator**: `localhost:8080`
+- **Emulator UI**: `localhost:4000`
+
+### Running with Emulators
+
+#### Start Emulators
+
+To start the Firebase emulators:
+
+```bash
+npm run emulators:start
+```
+
+This will start all configured emulators and open the Emulator UI at [http://localhost:4000](http://localhost:4000).
+
+#### Run Development Server with Emulators
+
+To run the Next.js development server connected to the emulators:
+
+```bash
+npm run dev:emulator
+```
+
+This sets the required environment variables (`NEXT_PUBLIC_USE_FIREBASE_EMULATOR` and `USE_FIREBASE_EMULATOR`) and starts the dev server.
+
+#### Run Tests with Emulators
+
+To run Cypress tests with emulators (automatically starts and stops emulators):
+
+```bash
+npm run cy:run:emulator
+```
+
+Or use the convenience script:
+
+```bash
+npm run test:emulator
+```
+
+The `firebase emulators:exec` command automatically starts the emulators before running tests and stops them after completion.
+
+### Environment Variables for Emulator Mode
+
+When running with emulators, the following environment variables are automatically set:
+
+- `NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true` - Enables client-side SDK emulator connections
+- `USE_FIREBASE_EMULATOR=true` - Enables server-side Admin SDK emulator connections
+- `FIREBASE_AUTH_EMULATOR_HOST=localhost:9099` - Admin SDK Auth emulator host (set programmatically)
+- `FIRESTORE_EMULATOR_HOST=localhost:8080` - Admin SDK Firestore emulator host (set programmatically)
+
+### Emulator vs Production Mode
+
+- **Production Mode** (default): Connects to your production Firebase project
+- **Emulator Mode**: Connects to local emulators running on your machine
+
+The app automatically detects emulator mode via environment variables and connects to the appropriate endpoints. Emulator data is ephemeral and resets when emulators are restarted.
+
+### Benefits of Using Emulators
+
+- **No Production Pollution**: Tests don't create users or data in your production environment
+- **Fast Testing**: Local emulators are faster than production API calls
+- **Isolated Testing**: Each test run starts with a clean slate
+- **Cost Savings**: No Firebase usage costs during testing
+
 ## Tech Stack
 
 - Next.js 16.1 (App Router)

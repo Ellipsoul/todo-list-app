@@ -15,20 +15,21 @@ export const authOptions: NextAuthOptions = {
 
         try {
           // Verify the Firebase ID token
-          // Since we're using the same Firebase project, we can trust the token
-          // In production, you might want to verify it with Firebase Admin SDK
-          const response = await fetch(
-            `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                idToken: credentials.idToken,
-              }),
+          // Use emulator endpoint if emulator mode is enabled, otherwise use production
+          const isEmulator = process.env.USE_FIREBASE_EMULATOR === "true";
+          const endpoint = isEmulator
+            ? "http://localhost:9099/identitytoolkit.googleapis.com/v1/accounts:lookup"
+            : `https://www.googleapis.com/identitytoolkit/v3/relyingparty/getAccountInfo?key=${process.env.NEXT_PUBLIC_FIREBASE_API_KEY}`;
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
             },
-          );
+            body: JSON.stringify({
+              idToken: credentials.idToken,
+            }),
+          });
 
           if (!response.ok) {
             return null;
