@@ -95,14 +95,6 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <TodoList />
       </main>
-
-      <Link
-        href="/settings"
-        className="fixed bottom-6 left-6 p-3 bg-card border border-border rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105 group"
-        title="Settings"
-      >
-        <Cog6ToothIcon className="w-6 h-6 text-muted-foreground group-hover:text-primary transition-colors" />
-      </Link>
     </div>
   );
 }
