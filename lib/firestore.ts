@@ -9,6 +9,7 @@ import {
   Timestamp,
   query,
   orderBy,
+  writeBatch,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { Todo } from "@/types/todo";
@@ -102,3 +103,22 @@ export async function deleteTodo(
   }
 }
 
+export async function deleteAllTodos(
+  userId: string
+): Promise<{ success: boolean; error: string | null }> {
+  try {
+    const todosRef = collection(db, `users/${userId}/todos`);
+    const querySnapshot = await getDocs(todosRef);
+    
+    const batch = writeBatch(db);
+    querySnapshot.forEach((doc) => {
+      batch.delete(doc.ref);
+    });
+
+    await batch.commit();
+    return { success: true, error: null };
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    return { success: false, error: errorMessage };
+  }
+}
