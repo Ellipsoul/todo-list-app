@@ -16,6 +16,7 @@
     "dev:emulator": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true npm run dev",
     "dev:emulator:ci": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true next dev",
     "cy:run:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
+    "cy:run:emulator:spec": "./scripts/run-cypress-spec.sh",
     "test:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
     "cleanup:users": "tsx scripts/cleanup-test-users.ts",
     "cleanup:users:emulator": "USE_FIREBASE_EMULATOR=true tsx scripts/cleanup-test-users.ts",

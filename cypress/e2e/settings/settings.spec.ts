@@ -10,7 +10,7 @@ describe("Settings Page", () => {
 
   const signupAndLogin = () => {
     cy.visit("/login");
-    cy.get('button').contains("Don't have an account? Sign up").click();
+    cy.get("button").contains("Don't have an account? Sign up").click();
     cy.get('input[id="email"]').type(email);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
@@ -34,12 +34,12 @@ describe("Settings Page", () => {
 
   it("should display correct note count and delete all notes", () => {
     // Reuse the user from previous test if possible? No, simpler to create new unique user per test file run or similar.
-    // But here I want to ensure a clean state. 
+    // But here I want to ensure a clean state.
     // Let's use a unique email for THIS test specifically to avoid conflicts.
     const testEmail = `test-notes-${Date.now()}@example.com`;
-    
+
     cy.visit("/login");
-    cy.get('button').contains("Don't have an account? Sign up").click();
+    cy.get("button").contains("Don't have an account? Sign up").click();
     cy.get('input[id="email"]').type(testEmail);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
@@ -66,7 +66,7 @@ describe("Settings Page", () => {
 
     // Check success message
     cy.contains("All notes deleted successfully").should("be.visible");
-    
+
     // Check count updated
     cy.contains("0").should("be.visible");
 
@@ -77,9 +77,9 @@ describe("Settings Page", () => {
 
   it("should delete account", () => {
     const testEmail = `test-delete-${Date.now()}@example.com`;
-    
+
     cy.visit("/login");
-    cy.get('button').contains("Don't have an account? Sign up").click();
+    cy.get("button").contains("Don't have an account? Sign up").click();
     cy.get('input[id="email"]').type(testEmail);
     cy.get('input[id="password"]').type(password);
     cy.get('button[type="submit"]').contains("Sign Up").click();
@@ -92,7 +92,9 @@ describe("Settings Page", () => {
     cy.get("button").contains("Delete Account").click();
 
     // Check modal appears
-    cy.contains("Are you sure you want to delete your account?").should("be.visible");
+    cy.contains("Are you sure you want to delete your account?").should(
+      "be.visible",
+    );
     cy.contains("delete my account").should("be.visible");
 
     // Target the modal specifically for interactions
@@ -101,15 +103,15 @@ describe("Settings Page", () => {
     // Try to delete without typing (button in modal should be disabled)
     cy.get(modalSelector).within(() => {
       cy.get("button").contains("Delete Account").should("be.disabled");
-      
+
       // Type wrong text
-      cy.get('input').type("wrong text");
+      cy.get("input").type("wrong text");
       cy.get("button").contains("Delete Account").should("be.disabled");
 
       // Type correct text
-      cy.get('input').clear().type("delete my account");
+      cy.get("input").clear().type("delete my account");
       cy.get("button").contains("Delete Account").should("not.be.disabled");
-      
+
       // Click delete in modal
       cy.get("button").contains("Delete Account").click();
     });
@@ -157,4 +159,3 @@ describe("Settings Page", () => {
     });
   });
 });
-
