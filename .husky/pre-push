@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Pre-push hook to run linting and Cypress tests with Firebase emulator
 # This hook will prevent pushing if linting or tests fail
 

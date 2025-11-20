@@ -9,6 +9,14 @@ import {
 } from "@/lib/subscriptions-server";
 import { SubscriptionClient, SubscriptionTier } from "@/types/subscription";
 
+function getBaseUrl(): string {
+  // Use production URL in production, localhost for development
+  if (process.env.NODE_ENV === "production") {
+    return "https://todos.aronteh.com";
+  }
+  return "http://localhost:3000";
+}
+
 export async function createCheckoutSession(
   paymentType: "monthly" | "one-time",
 ): Promise<{ url: string | null; error: string | null }> {
@@ -25,7 +33,7 @@ export async function createCheckoutSession(
     const customerId = await getOrCreateStripeCustomer(userId, email);
 
     // Get base URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseUrl = getBaseUrl();
 
     // Create checkout session
     const checkoutSession = await stripe.checkout.sessions.create({
@@ -333,7 +341,8 @@ export async function createCustomerPortalSession(): Promise<{
       return { url: null, error: "No Stripe customer found" };
     }
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+    // Get base URL
+    const baseUrl = getBaseUrl();
 
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: subscription.stripeCustomerId,
