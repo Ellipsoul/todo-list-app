@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently -n \"next,stripe\" -c \"blue,green\" \"next dev\" \"stripe listen --forward-to localhost:3000/api/stripe/webhook\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -11,19 +11,21 @@
     "cy:run": "cypress run",
     "cy:component:open": "cypress open --component",
     "cy:component:run": "cypress run --component",
-    "emulators:start": "firebase emulators:start",
-    "emulators:exec": "firebase emulators:exec --",
+    "emulators:start": "./scripts/emulator-with-demo-test.sh firebase emulators:start",
+    "emulators:exec": "./scripts/emulator-with-demo-test.sh firebase emulators:exec --",
     "dev:emulator": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true npm run dev",
     "dev:emulator:ci": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true next dev",
-    "cy:run:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
+    "dev:emulator:ci:with-webhook": "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true concurrently -n \"next,stripe\" -c \"blue,green\" \"next dev\" \"stripe listen --forward-to localhost:3000/api/stripe/webhook\"",
+    "cy:run:emulator": "./scripts/emulator-with-demo-test.sh firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci:with-webhook http://localhost:3000 cy:run\"",
     "cy:run:emulator:spec": "./scripts/run-cypress-spec.sh",
-    "test:emulator": "firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
+    "test:emulator": "./scripts/emulator-with-demo-test.sh firebase emulators:exec -- \"NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 cy:run\"",
     "cleanup:users": "tsx scripts/cleanup-test-users.ts",
     "cleanup:users:emulator": "USE_FIREBASE_EMULATOR=true tsx scripts/cleanup-test-users.ts",
     "prepare": "husky"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@stripe/stripe-js": "^4.8.0",
     "firebase": "^12.5.0",
     "firebase-admin": "^13.6.0",
     "next": "16.0.1",
@@ -31,7 +33,8 @@
     "next-themes": "^0.4.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "react-hot-toast": "^2.6.0"
+    "react-hot-toast": "^2.6.0",
+    "stripe": "^17.3.1"
   },
   "devDependencies": {
     "@cypress/react": "^9.0.1",
@@ -40,6 +43,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.1.2",
     "cypress": "^15.6.0",
     "dotenv": "^17.2.3",
     "eslint": "^9",

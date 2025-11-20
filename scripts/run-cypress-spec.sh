@@ -11,5 +11,6 @@ fi
 
 SPEC_PATH="$1"
 
-firebase emulators:exec -- "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 'cypress run --spec ${SPEC_PATH}'"
+# Use the emulator-with-demo-test script to ensure demo-test project ID
+./scripts/emulator-with-demo-test.sh firebase emulators:exec -- "NEXT_PUBLIC_USE_FIREBASE_EMULATOR=true USE_FIREBASE_EMULATOR=true start-server-and-test dev:emulator:ci http://localhost:3000 'cypress run --spec ${SPEC_PATH}'"
 

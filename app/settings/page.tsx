@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
@@ -11,16 +11,28 @@ import { FirebaseAuthRestore } from "@/components/FirebaseAuthRestore";
 import { auth } from "@/lib/firebase-auth";
 import { deleteUser } from "firebase/auth";
 import { deleteAllTodos, getTodos } from "@/lib/firestore";
+import { getUserSubscription } from "@/lib/subscriptions";
+import { SubscriptionStatus } from "@/components/SubscriptionStatus";
+import { SubscriptionClient } from "@/types/subscription";
+import {
+  getSubscriptionStatus,
+  verifyCheckoutSession,
+} from "@/app/actions/stripe";
 
 import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [noteCount, setNoteCount] = useState<number | null>(null);
   const [joinDate, setJoinedDate] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [subscription, setSubscription] = useState<SubscriptionClient | null>(
+    null,
+  );
+  const [hasCheckedPayment, setHasCheckedPayment] = useState(false);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -28,12 +40,139 @@ export default function SettingsPage() {
     }
   }, [status, router]);
 
+  // Check for payment result in URL params
+  useEffect(() => {
+    const checkPaymentResult = async () => {
+      if (hasCheckedPayment || !session?.user?.id) return;
+
+      const sessionId = searchParams.get("session_id");
+      const canceled = searchParams.get("canceled");
+
+      // Remove query params from URL
+      if (sessionId || canceled) {
+        router.replace("/settings", { scroll: false });
+        setHasCheckedPayment(true);
+      }
+
+      if (canceled === "true") {
+        toast.error("Payment was canceled", {
+          duration: Infinity,
+          id: "payment-canceled",
+        });
+        return;
+      }
+
+      if (sessionId) {
+        try {
+          // Verify the checkout session
+          const verifyResult = await verifyCheckoutSession(sessionId);
+
+          if (verifyResult.success) {
+            // Check subscription status
+            const subscriptionResult = await getSubscriptionStatus();
+
+            if (subscriptionResult.subscription?.tier === "PREMIUM") {
+              toast.success(
+                "Payment successful! Your Premium subscription is now active. Enjoy unlimited todos!",
+                {
+                  duration: Infinity,
+                  id: "payment-verification",
+                },
+              );
+              // Refresh subscription data
+              const userSubscription = await getUserSubscription(
+                session.user.id,
+              );
+              if (userSubscription) {
+                setSubscription({
+                  ...userSubscription,
+                  createdAt: userSubscription.createdAt.toMillis(),
+                  updatedAt: userSubscription.updatedAt.toMillis(),
+                  currentPeriodEnd:
+                    userSubscription.currentPeriodEnd?.toMillis() ??
+                      null,
+                });
+              }
+            } else {
+              // Payment succeeded but subscription not updated yet
+              toast.success(
+                "Payment successful! Your subscription is being activated and should be ready shortly.",
+                {
+                  duration: Infinity,
+                  id: "payment-verification",
+                },
+              );
+              // Retry after a delay
+              setTimeout(async () => {
+                const retryResult = await getSubscriptionStatus();
+                if (retryResult.subscription?.tier === "PREMIUM") {
+                  toast.success(
+                    "Your Premium subscription is now active!",
+                    {
+                      duration: Infinity,
+                      id: "payment-verification",
+                    },
+                  );
+                  const userSubscription = await getUserSubscription(
+                    session.user.id,
+                  );
+                  if (userSubscription) {
+                    setSubscription({
+                      ...userSubscription,
+                      createdAt: userSubscription.createdAt.toMillis(),
+                      updatedAt: userSubscription.updatedAt.toMillis(),
+                      currentPeriodEnd:
+                        userSubscription.currentPeriodEnd?.toMillis() ??
+                          null,
+                    });
+                  }
+                }
+              }, 2000);
+            }
+          } else {
+            toast.error(
+              verifyResult.error ||
+                "Payment verification failed. Please contact support if you were charged.",
+              {
+                duration: Infinity,
+                id: "payment-verification",
+              },
+            );
+          }
+        } catch (error) {
+          console.error("Error verifying payment:", error);
+          toast.error(
+            "An error occurred while verifying your payment. Please contact support if you were charged.",
+            {
+              duration: Infinity,
+              id: "payment-verification",
+            },
+          );
+        }
+      }
+    };
+
+    checkPaymentResult();
+  }, [session, searchParams, router, hasCheckedPayment]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       if (session?.user?.id) {
         // Fetch note count
         const todos = await getTodos(session.user.id);
         setNoteCount(todos.length);
+
+        // Fetch subscription and convert to client-safe format
+        const userSubscription = await getUserSubscription(session.user.id);
+        if (userSubscription) {
+          setSubscription({
+            ...userSubscription,
+            createdAt: userSubscription.createdAt.toMillis(),
+            updatedAt: userSubscription.updatedAt.toMillis(),
+            currentPeriodEnd: userSubscription.currentPeriodEnd?.toMillis() ??
+              null,
+          });
+        }
       }
     };
 
@@ -212,6 +351,19 @@ export default function SettingsPage() {
                 </div>
               </div>
             </section>
+
+            {/* Subscription Section */}
+            {subscription && (
+              <section className="bg-card border border-border rounded-xl p-6 shadow-sm mb-6">
+                <h3 className="text-xl font-semibold text-card-foreground mb-4">
+                  Subscription
+                </h3>
+                <SubscriptionStatus
+                  subscription={subscription}
+                  todoCount={noteCount || 0}
+                />
+              </section>
+            )}
 
             {/* Danger Zone */}
             <section className="bg-destructive/5 border border-destructive/20 rounded-xl p-6 shadow-sm">

@@ -10,10 +10,18 @@ import {
   User,
 } from "firebase/auth";
 
+// When using emulator, use "demo-test" as projectId to match emulator's project ID
+// This ensures tokens have the correct audience claim
+const useEmulator = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true" ||
+  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "1";
+const expectedProjectId = useEmulator
+  ? "demo-test"
+  : process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  projectId: expectedProjectId,
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
@@ -28,8 +36,7 @@ export const auth = getAuth(app);
 // Connect to Auth emulator if enabled (client-side only)
 // IMPORTANT: This must be called BEFORE any auth operations
 // Check both the environment variable and ensure we're in browser context
-const shouldUseEmulator = typeof window !== "undefined" &&
-  process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATOR === "true";
+const shouldUseEmulator = typeof window !== "undefined" && useEmulator;
 
 if (shouldUseEmulator) {
   try {
