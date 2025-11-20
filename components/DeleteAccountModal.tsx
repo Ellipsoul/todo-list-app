@@ -58,6 +58,11 @@ export function DeleteAccountModal({
     if (isOpen && !prevIsOpenRef.current) {
       startTransition(() => {
         setModalInstance((prev) => prev + 1);
+        setConfirmationText("");
+      });
+    } else if (!isOpen && prevIsOpenRef.current) {
+      startTransition(() => {
+        setConfirmationText("");
       });
     }
     prevIsOpenRef.current = isOpen;

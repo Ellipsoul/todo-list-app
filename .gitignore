@@ -47,6 +47,7 @@ next-env.d.ts
 # firebase emulator
 .firebase/
 firebase-debug.log
+firestore-debug.log
 
 # Cleanup test users file
 scripts/cleanup-test-users.ts

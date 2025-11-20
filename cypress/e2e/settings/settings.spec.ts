@@ -127,5 +127,34 @@ describe("Settings Page", () => {
     // Should fail
     cy.contains("auth/user-not-found").should("exist"); // Or whatever error message appears
   });
+
+  it("should reset delete modal input when reopened", () => {
+    const testEmail = `test-delete-reset-${Date.now()}@example.com`;
+
+    cy.visit("/login");
+    cy.get("button").contains("Don't have an account? Sign up").click();
+    cy.get('input[id="email"]').type(testEmail);
+    cy.get('input[id="password"]').type(password);
+    cy.get('button[type="submit"]').contains("Sign Up").click();
+    cy.url().should("eq", Cypress.config().baseUrl + "/");
+
+    cy.visit("/settings");
+    cy.get("button").contains("Delete Account").click();
+
+    const modalSelector = ".fixed.inset-0";
+    cy.get(modalSelector).within(() => {
+      cy.get('input[id="confirmation-text"]').type("delete my account");
+      cy.get("button").contains("Delete Account").should("not.be.disabled");
+      cy.get("button").contains("Cancel").click();
+    });
+
+    cy.get(modalSelector).should("not.exist");
+
+    cy.get("button").contains("Delete Account").click();
+    cy.get(modalSelector).within(() => {
+      cy.get('input[id="confirmation-text"]').should("have.value", "");
+      cy.get("button").contains("Delete Account").should("be.disabled");
+    });
+  });
 });
 
