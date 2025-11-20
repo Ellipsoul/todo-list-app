@@ -1,8 +1,9 @@
 "use client";
 
 import { useSession } from "next-auth/react";
+import type { Session } from "next-auth";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 import toast from "react-hot-toast";
 import Image from "next/image";
@@ -21,24 +22,17 @@ import {
 
 import { DeleteAccountModal } from "@/components/DeleteAccountModal";
 
-export default function SettingsPage() {
-  const { data: session, status } = useSession();
+// Component that handles payment verification using searchParams
+function PaymentVerification({
+  session,
+  setSubscription,
+}: {
+  session: Session | null;
+  setSubscription: (subscription: SubscriptionClient) => void;
+}) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [noteCount, setNoteCount] = useState<number | null>(null);
-  const [joinDate, setJoinedDate] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [subscription, setSubscription] = useState<SubscriptionClient | null>(
-    null,
-  );
   const [hasCheckedPayment, setHasCheckedPayment] = useState(false);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
 
   // Check for payment result in URL params
   useEffect(() => {
@@ -153,7 +147,27 @@ export default function SettingsPage() {
     };
 
     checkPaymentResult();
-  }, [session, searchParams, router, hasCheckedPayment]);
+  }, [session, searchParams, router, hasCheckedPayment, setSubscription]);
+
+  return null;
+}
+
+export default function SettingsPage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [noteCount, setNoteCount] = useState<number | null>(null);
+  const [joinDate, setJoinedDate] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [subscription, setSubscription] = useState<SubscriptionClient | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -273,6 +287,12 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-background">
       <FirebaseAuthRestore />
+      <Suspense fallback={null}>
+        <PaymentVerification
+          session={session}
+          setSubscription={setSubscription}
+        />
+      </Suspense>
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">

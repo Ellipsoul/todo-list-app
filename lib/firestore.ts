@@ -64,7 +64,8 @@ export async function checkTodoLimit(
         maxCount: Infinity, // Don't block on error
         error: null,
       };
-    } catch (getTodosError) {
+    } catch (error) {
+      console.error("Error getting todos:", error);
       // If we can't even get todos, default to allowing creation
       return {
         canCreate: true,

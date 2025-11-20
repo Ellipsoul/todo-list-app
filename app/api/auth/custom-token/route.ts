@@ -93,6 +93,7 @@ function initializeAdmin() {
 }
 
 export async function POST() {
+  let session;
   try {
     // Initialize Firebase Admin SDK
     if (!initializeAdmin()) {
@@ -106,7 +107,7 @@ export async function POST() {
     }
 
     // Get the NextAuth session
-    const session = await getServerSession(authOptions);
+    session = await getServerSession(authOptions);
 
     if (!session?.firebaseIdToken) {
       return NextResponse.json(
@@ -125,7 +126,22 @@ export async function POST() {
 
     return NextResponse.json({ customToken });
   } catch (error) {
+    // Enhanced error logging to understand the issue
     console.error("Error creating custom token:", error);
+    if (error instanceof Error) {
+      console.error("Error name:", error.name);
+      console.error("Error message:", error.message);
+      // Firebase Auth errors have a code property
+      if ("code" in error) {
+        console.error("Firebase error code:", (error as { code: string }).code);
+      }
+      // Log token info for debugging (without exposing the full token)
+      if (session?.firebaseIdToken) {
+        const tokenPreview = session.firebaseIdToken.substring(0, 20) + "...";
+        console.error("Token preview:", tokenPreview);
+        console.error("Token length:", session.firebaseIdToken.length);
+      }
+    }
     const errorMessage = error instanceof Error
       ? error.message
       : "Failed to create custom token";
